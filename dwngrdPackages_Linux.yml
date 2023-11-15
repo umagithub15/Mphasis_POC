@@ -1,0 +1,23 @@
+---
+- name: Downgrade Kernel
+  hosts: linux_servers
+  gather_facts: true
+  
+  tasks:
+    - name: Remove Current Kernel (example packages)
+      ansible.builtin.package:
+        name: 
+          - "linux-image-generic"
+          - "linux-headers-generic"
+        state: absent
+
+    - name: Install Linux Kernel 5.4 (example packages)
+      ansible.builtin.package:
+        name: 
+          - "linux-image-5.4.0-84-generic"
+          - "linux-headers-5.4.0-84-generic"
+        state: present
+
+    - name: Update Grub Configuration
+      ansible.builtin.command:
+        cmd: update-grub

@@ -1,0 +1,23 @@
+Pre-check for Windows.yml
+---
+- name: Pre-checks on Windows Servers
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Check available disk space
+      win_command: Get-PSDrive -PSProvider 'FileSystem' | Where-Object {$_.Used -gt 0} | Select-Object Name, @{Name="FreeSpace(GB)";Expression={"{0:N2}" -f ($_.Free / 1GB)}} | ConvertTo-Json
+      register: disk_space_result
+
+    - name: Check system uptime
+      win_command: (Get-Date) - (gcim Win32_OperatingSystem).LastBootUpTime
+      register: uptime_result
+
+    - name: Display pre-check results
+      debug:
+        var: disk_space_result.stdout_lines
+
+    - name: Display system uptime
+      debug:
+        var: uptime_result.stdout

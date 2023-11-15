@@ -1,0 +1,37 @@
+---
+- name: Configure Server Host Details
+  hosts: linux_servers
+  gather_facts: true
+  become: yes  
+
+  vars:
+    server_ip: "192.168.1.10"  
+    netmask: "255.255.255.0"   
+    gateway: "192.168.1.1"     
+    hostname: "example-server"
+
+  tasks:
+    - name: Set IP address, netmask, and gateway
+      ansible.builtin.network_interface:
+        interface: "eth0"      
+        address: "{{ server_ip }}"
+        mask: "{{ netmask }}"
+        gateway: "{{ gateway }}"
+        state: up
+
+    - name: Update hostname
+      ansible.builtin.hostname:
+        name: "{{ hostname }}"
+      notify: restart network
+
+  handlers:
+    - name: restart network
+      ansible.builtin.service:
+        name: "networking"
+        state: restarted
+        
+    - name: Update /etc/hosts file
+      ansible.builtin.lineinfile:
+        path: "/etc/hosts"
+        line: "{{ server_ip }} {{ hostname }}"
+        state: present

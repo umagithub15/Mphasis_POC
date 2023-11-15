@@ -1,0 +1,36 @@
+---
+- name: Configure Account Management Auditing for Linux
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Update package cache
+      ansible.builtin.package:
+        name: "yum"
+        state: latest
+
+    - name: Ensure auditd is installed
+      ansible.builtin.package:
+        name: auditd
+        state: present
+
+    - name: Configure audit rules for account management auditing
+      ansible.builtin.lineinfile:
+        path: /etc/audit/rules.d/audit.rules
+        line: '-w /etc/passwd -p wa -k account_mgmt'
+        state: present
+        create: yes
+      notify: Restart auditd
+
+    - name: Enable auditd service
+      ansible.builtin.systemd:
+        name: auditd
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Restart auditd
+      ansible.builtin.systemd:
+        name: auditd
+        state: restarted

@@ -1,0 +1,27 @@
+---
+- name: Configure Account Management Auditing for Linux
+  hosts: all
+  become: true
+  tasks:
+    - name: Update package cache
+      ansible.builtin.package:
+        name: ""
+        state: latest
+
+    - name: Ensure auditd is installed
+      ansible.builtin.package:
+        name: auditd
+        state: present
+
+    - name: Create audit rule for /etc/passwd
+      ansible.builtin.lineinfile:
+        path: /etc/audit/rules.d/audit.rules
+        line: '-w /etc/passwd -p wa -k account_mgmt'
+        state: present
+      notify: Restart auditd
+
+  handlers:
+    - name: Restart auditd
+      ansible.builtin.service:
+        name: auditd
+        state: restarted

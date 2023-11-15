@@ -1,0 +1,12 @@
+---
+- name: Remove Specific Packages
+  hosts: linux_servers
+  gather_facts: true
+
+  tasks:
+    - name: Remove Apache Web Server and MySQL Database Server
+      ansible.builtin.package:
+        name: 
+          - "apache2" 
+          - "mysql-server"
+        state: absent

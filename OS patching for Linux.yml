@@ -1,0 +1,41 @@
+OS patching for Linux
+
+---
+- name: Patch Linux Systems
+  hosts: your_target_linux_hosts
+  gather_facts: true
+  become: yes
+
+  tasks:
+    - name: Update package cache (apt)
+      ansible.builtin.apt:
+        update_cache: yes
+      when: ansible_pkg_mgr == 'apt'
+
+    - name: Update package cache (dnf)
+      ansible.builtin.dnf:
+        update_cache: yes
+      when: ansible_pkg_mgr == 'dnf'
+
+    - name: Update package cache (yum)
+      ansible.builtin.yum:
+        name: '*'
+        state: latest
+      when: ansible_pkg_mgr == 'yum'
+
+    - name: Upgrade all packages (apt)
+      ansible.builtin.apt:
+        upgrade: safe
+      when: ansible_pkg_mgr == 'apt'
+
+    - name: Upgrade all packages (dnf)
+      ansible.builtin.dnf:
+        name: '*'
+        state: latest
+      when: ansible_pkg_mgr == 'dnf'
+
+    - name: Upgrade all packages (yum)
+      ansible.builtin.yum:
+        name: '*'
+        state: latest
+      when: ansible_pkg_mgr == 'yum'

@@ -1,0 +1,22 @@
+---
+- name: Rollback Configuration on Linux Servers
+  hosts: all
+  become: true
+  tasks:
+    - name: Check if backup files exist
+      stat:
+        path: /path/to/backup/config
+      register: backup_files
+
+    - name: Rollback configuration files
+      ansible.builtin.copy:
+        src: /path/to/backup/config
+        dest: /path/to/config
+        remote_src: yes
+      when: backup_files.stat.exists
+
+    - name: Restart the service
+      ansible.builtin.service:
+        name: myservice
+        state: restarted
+      when: backup_files.stat.exists
