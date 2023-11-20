@@ -13,3 +13,4 @@
       ansible.builtin.win_chocolatey:
         name: firefox
         state: present
+
