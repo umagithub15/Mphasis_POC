@@ -1,5 +1,3 @@
-OS patching for Linux
-
 ---
 - name: Patch Linux Systems
   hosts: your_target_linux_hosts
