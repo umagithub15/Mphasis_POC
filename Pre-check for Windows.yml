@@ -1,4 +1,3 @@
-Pre-check for Windows.yml
 ---
 - name: Pre-checks on Windows Servers
   hosts: all
