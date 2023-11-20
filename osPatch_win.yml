@@ -1,6 +1,6 @@
 ---
 - name: Patch Windows Servers
-  hosts: all
+  hosts: windows
   gather_facts: true
   tasks:
     - name: Check for available updates
