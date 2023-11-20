@@ -1,6 +1,3 @@
-Pre-checks for Linux
-
-
 ---
 - name: Pre-checks on Linux Servers
   hosts: linux_servers
