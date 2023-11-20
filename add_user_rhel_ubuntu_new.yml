@@ -1,0 +1,30 @@
+---
+- name: Add User on Ubuntu and RHEL 8
+  hosts: linux
+  become: yes
+
+  vars:
+    new_username: "user1"
+
+  tasks:
+    - name: Add user
+      user:
+        name: "{{ new_username }}"
+        comment: "Example User"
+        state: present
+        createhome: yes
+        shell: /bin/bash
+
+    - name: Add user to sudo group (Ubuntu specific)
+      user:
+        name: "{{ new_username }}"
+        groups: sudo
+        append: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Ensure sudoers file is configured (Ubuntu specific)
+      lineinfile:
+        dest: /etc/sudoers
+        line: "{{ new_username }} ALL=(ALL:ALL) ALL"
+        validate: 'visudo -cf %s'
+      when: ansible_distribution == 'Ubuntu'

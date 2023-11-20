@@ -1,0 +1,34 @@
+---
+- name: Delete users
+  hosts: all
+  become: true
+  vars:
+    users:
+      - user1
+  tasks:
+    - name: Check if user exists
+      command: "id -u {{ item }}"
+      register: user_exists
+      loop: "{{ users }}"
+      loop_control:
+        loop_var: item
+
+    - name: Remove users
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: absent
+      when: user_exists.results[index].rc == 0
+      loop: "{{ users }}"
+      loop_control:
+        loop_var: item
+        index_var: index
+      register: user_changed
+
+    - name: User deleted
+      debug:
+        msg: "User deleted {{ item }}"
+      when: user_changed.changed
+      loop: "{{ users }}"
+      loop_control:
+        loop_var: item
+
