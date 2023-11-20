@@ -1,4 +1,4 @@
-s---
+---
 - name: Install Apache and MySQL
   hosts: linux_servers
   gather_facts: true
