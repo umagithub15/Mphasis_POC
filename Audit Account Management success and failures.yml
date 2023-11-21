@@ -1,36 +1,24 @@
 ---
-- name: Configure Account Management Auditing for Linux
+- name: Configure Audit Account Management
   hosts: all
-  gather_facts: true
-  become: true
+  become: yes
 
   tasks:
-    - name: Update package cache
-      ansible.builtin.package:
-        name: "yum"
-        state: latest
+    - name: Configure Audit Account Management for RHEL
+      ansible.builtin.command: >
+        auditctl -w /etc/passwd -p wa -k account_changes
+        auditctl -w /etc/shadow -p wa -k account_changes
+      when: "'RedHat' in ansible_distribution"
 
-    - name: Ensure auditd is installed
-      ansible.builtin.package:
-        name: auditd
-        state: present
+    - name: Configure Audit Account Management for Ubuntu
+      ansible.builtin.command: >
+        auditctl -w /etc/passwd -p wa -k account_changes
+        auditctl -w /etc/shadow -p wa -k account_changes
+      when: "'Ubuntu' in ansible_distribution"
 
-    - name: Configure audit rules for account management auditing
-      ansible.builtin.lineinfile:
-        path: /etc/audit/rules.d/audit.rules
-        line: '-w /etc/passwd -p wa -k account_mgmt'
-        state: present
-        create: yes
-      notify: Restart auditd
-
-    - name: Enable auditd service
-      ansible.builtin.systemd:
-        name: auditd
-        state: started
-        enabled: yes
-
-  handlers:
-    - name: Restart auditd
-      ansible.builtin.systemd:
-        name: auditd
-        state: restarted
+    - name: Configure Audit Account Management for Windows
+      ansible.windows.win_audit_policy:
+        subcategory: "Security State Change"
+        success: true
+        failure: true
+      when: "'Microsoft' in ansible_distribution"
