@@ -1,6 +1,6 @@
 ---
 - name: Patch Linux Systems
-  hosts: all
+  hosts: linux
   gather_facts: true
   become: yes
 
