@@ -1,35 +1,23 @@
 ---
-- name: Configure Account Lockout Policy for Linux
+- name: Set Account Lockout Policy
   hosts: all
-  become: true
+  become: yes
+
   tasks:
-    - name: Ensure PAM directory exists
-      ansible.builtin.file:
-        path: /etc/pam.d/
-        state: directory
+    - name: Set Account Lockout Policy for RHEL
+      ansible.builtin.command: >
+        faillock --unlock-time 900 --lock-time 1800 --reset --maximum 3
+      when: "'RedHat' in ansible_distribution"
 
-    - name: Copy PAM configuration file for common-auth
-      ansible.builtin.copy:
-        src: /path/to/local/common-auth
-        dest: /etc/pam.d/common-auth
-        remote_src: yes
+    - name: Set Account Lockout Policy for Ubuntu
+      ansible.builtin.command: >
+        pam_tally2 --deny=3 --noreset
+      when: "'Ubuntu' in ansible_distribution"
 
-    - name: Copy PAM configuration file for SSH
-      ansible.builtin.copy:
-        src: /path/to/local/sshd
-        dest: /etc/pam.d/sshd
-        remote_src: yes
+    - name: Set Account Lockout Policy for Windows
+      ansible.windows.win_account_policy:
+        lockout_threshold: 3
+        lockout_duration_minutes: 15
+        lockout_observation_window_minutes: 15
+      when: "'Microsoft' in ansible_distribution"
 
-    - name: Configure PAM account lockout for common-auth
-      ansible.builtin.lineinfile:
-        path: /etc/pam.d/common-auth
-        regexp: '^auth[ \t]+required[ \t]+pam_faillock.so'
-        line: 'auth required pam_faillock.so preauth silent deny=3 unlock_time=900'
-        state: present
-
-    - name: Configure PAM account lockout for SSH
-      ansible.builtin.lineinfile:
-        path: /etc/pam.d/sshd
-        regexp: '^auth[ \t]+required[ \t]+pam_faillock.so'
-        line: 'auth required pam_faillock.so preauth silent deny=3 unlock_time=900'
-        state: present
