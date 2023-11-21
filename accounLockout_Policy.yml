@@ -1,23 +1,43 @@
+
 ---
-- name: Set Account Lockout Policy
+- name: Set Account Lockout Policy for Users
   hosts: all
   become: yes
+
+  vars:
+    users_lockout_policy:
+      - username: user1
+        lockout_threshold: 3
+        lockout_duration_minutes: 15
+        observation_window_minutes: 30
+      - username: user2
+        lockout_threshold: 5
+        lockout_duration_minutes: 20
+        observation_window_minutes: 45
+      - username: user3
+        lockout_threshold: 4
+        lockout_duration_minutes: 10
+        observation_window_minutes: 25
 
   tasks:
     - name: Set Account Lockout Policy for RHEL
       ansible.builtin.command: >
-        faillock --unlock-time 900 --lock-time 1800 --reset --maximum 3
+        faillock --user {{ item.username }} --deny {{ item.lockout_threshold }} --lock-time {{ item.lockout_duration_minutes * 60 }}
+      with_items: "{{ users_lockout_policy }}"
       when: "'RedHat' in ansible_distribution"
 
     - name: Set Account Lockout Policy for Ubuntu
       ansible.builtin.command: >
-        pam_tally2 --deny=3 --noreset
+        pam_tally2 --user {{ item.username }} --deny {{ item.lockout_threshold }} --lock-time {{ item.lockout_duration_minutes * 60 }}
+      with_items: "{{ users_lockout_policy }}"
       when: "'Ubuntu' in ansible_distribution"
 
     - name: Set Account Lockout Policy for Windows
       ansible.windows.win_account_policy:
-        lockout_threshold: 3
-        lockout_duration_minutes: 15
-        lockout_observation_window_minutes: 15
+        username: "{{ item.username }}"
+        lockout_threshold: "{{ item.lockout_threshold }}"
+        lockout_duration_minutes: "{{ item.lockout_duration_minutes }}"
+        lockout_observation_window_minutes: "{{ item.observation_window_minutes }}"
+      with_items: "{{ users_lockout_policy }}"
       when: "'Microsoft' in ansible_distribution"
 
