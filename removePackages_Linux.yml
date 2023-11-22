@@ -1,6 +1,6 @@
 ---
 - name: Remove Specific Packages
-  hosts: linux_servers
+  hosts: all
   gather_facts: true
 
   tasks:
