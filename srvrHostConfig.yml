@@ -1,6 +1,6 @@
 ---
 - name: Configure Server Host Details
-  hosts: linux_servers
+  hosts: all
   gather_facts: true
   become: yes  
 
