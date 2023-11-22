@@ -1,6 +1,6 @@
 ---
 - name: Pre-checks on Linux Servers
-  hosts: linux_servers
+  hosts: all
   gather_facts: true
   become: false
 
