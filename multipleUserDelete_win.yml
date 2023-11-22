@@ -1,6 +1,6 @@
 ---
 - name: Delete Multiple Windows Users
-  hosts: windows
+  hosts: all
   gather_facts: true
 
   vars:
