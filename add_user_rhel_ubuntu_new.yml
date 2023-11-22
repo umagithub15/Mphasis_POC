@@ -1,6 +1,6 @@
 ---
 - name: Add User on Ubuntu and RHEL 8
-  hosts: linux
+  hosts: all
   become: yes
 
   vars:
