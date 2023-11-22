@@ -1,6 +1,6 @@
 ---
 - name: Downgrade Kernel
-  hosts: linux_servers
+  hosts: all
   gather_facts: true
   
   tasks:
