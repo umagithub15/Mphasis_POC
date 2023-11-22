@@ -1,7 +1,7 @@
 ---
 
 - name: Delete users  
-  hosts: linux
+  hosts: all
   become: true
   vars:
     user: "{{ users }}"
