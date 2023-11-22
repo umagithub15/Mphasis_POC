@@ -1,34 +1,41 @@
 ---
-
-# Add multiple users into wheel group and create random passwords for users which should be changed after one time login
+# Add multiple users into wheel group and create random passwords for users which should be changed after one-time login
 - name: Create users
   hosts: all
   become: true
   vars:
-    users: "{{ users }}"
+    users:
+      - user1
+      - user2
+      # Add more users as needed
     password_dict: {}
+
   tasks:
+    - name: Install the latest version of whois (provides mkpasswd)
+      ansible.builtin.package:
+        name: whois
+        state: present
+      when: ansible_distribution == 'Ubuntu'
+
     - name: Install the latest version of expect
-      ansible.builtin.yum:
+      ansible.builtin.package:
         name: expect
         state: latest
+      when: ansible_distribution == 'RedHat'
 
     - name: Create the 'wheel' group if it does not exist
-      group:
+      ansible.builtin.group:
         name: wheel
         state: present
-    
+
     - name: Generate random passwords for users
-      # 12 chars 3 digits 3 capital letters and zero special chars
-      shell: mkpasswd-expect -l 12 -d 3 -C 3 -s 0
+      ansible.builtin.command: mkpasswd -m sha-512 --chars=12
       register: encrypted_user_password
       loop: "{{ users }}"
-    
-    - name : Create password dictionary
-      # Combine the encrypted password for each user into a dictionary
-      # with the user name as the key
+
+    - name: Create password dictionary
       set_fact:
-        password_dict: "{{ password_dict | combine({item.item: item.stdout | trim }) }}"
+        password_dict: "{{ password_dict | combine({item.item: item.stdout_lines[0]}) }}"
       loop: "{{ encrypted_user_password.results }}"
 
     - name: Create user accounts
@@ -41,16 +48,17 @@
         shell: /bin/bash
         update_password: always
       loop: "{{ users }}"
-      register: user_created 
+      register: user_created
 
     - name: Force users to change passwords on first login
       ansible.builtin.command:
-        cmd: chage -d 0 {{ item.name }}
+        cmd: chage -d 0 {{ item.item }}
       loop: "{{ user_created.results }}"
       when: item.changed
 
     - name: Display user names and passwords
-      debug:
-        msg: "User: {{ item.name }} Password: {{ password_dict[item.name] }}"
+      ansible.builtin.debug:
+        msg: "User: {{ item.item }} Password: {{ password_dict[item.item] }}"
       loop: "{{ user_created.results }}"
+
 
