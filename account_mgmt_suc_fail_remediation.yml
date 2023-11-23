@@ -1,0 +1,35 @@
+---
+- name: Configure Audit Account Management
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Configure Audit Account Management for RHEL and Ubuntu
+      ansible.builtin.command: "{{ item }}"
+      with_items:
+        - "auditctl -w /etc/passwd -p wa -k account_changes"
+        - "auditctl -w /etc/shadow -p wa -k account_changes"
+      when: "'RedHat' in ansible_distribution or 'Ubuntu' in ansible_distribution"
+      ignore_errors: yes
+      register: audit_result
+
+    - name: Report Failures for RHEL and Ubuntu
+      debug:
+        msg: "Audit configuration failed: {{ audit_result.results | select('failed') | map(attribute='item') | list }}"
+      when: audit_result | failed
+
+    - name: Configure Audit Account Management for Windows
+      ansible.windows.win_audit_policy:
+        subcategory: "{{ item }}"
+        success: true
+        failure: true
+      with_items:
+        - "Security State Change"
+      when: "'Microsoft' in ansible_distribution"
+      ignore_errors: yes
+      register: win_audit_policy_result
+
+    - name: Report Failures for Windows
+      debug:
+        msg: "Windows audit policy configuration failed: {{ win_audit_policy_result.results | select('failed') | map(attribute='item') | list }}"
+      when: win_audit_policy_result | failed and "'Microsoft' in ansible_distribution"
