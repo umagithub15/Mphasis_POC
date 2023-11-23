@@ -1,0 +1,67 @@
+- name: Set Account Lockout Policy
+  hosts: all
+  become: yes
+
+  vars:
+    users_lockout_policy:
+      # your lockout policies here
+
+    redhat_os: "'RedHat' in ansible_distribution"
+    ubuntu_os: "'Ubuntu' in ansible_distribution"
+    windows_os: "'Microsoft' in ansible_distribution"
+
+  tasks:
+
+    - name: Check for faillock command on RHEL
+      ansible.builtin.command: command -v faillock
+      register: faillock_command_exists
+      changed_when: false
+      when: redhat_os
+
+    - name: Set Account Lockout Policy for RHEL
+      ansible.builtin.command: >
+        faillock --user {{ item.username }} --deny {{ item.lockout_threshold }} --lock-time {{ item.lockout_duration_minutes * 60 }}
+      with_items: "{{ users_lockout_policy }}"
+      when: redhat_os
+      ignore_errors: yes
+      register: faillock_result
+
+    - name: Report Failures for RHEL
+      debug:
+        msg: "Faillock failed for {{ faillock_result.results | select('failed') | map(attribute='item.username') | list }}"
+      when: faillock_result | failed
+
+    - name: Check for pam_tally2 command on Ubuntu
+      ansible.builtin.command: command -v pam_tally2
+      register: pam_tally2_command_exists
+      changed_when: false
+      when: ubuntu_os
+
+    - name: Set Account Lockout Policy for Ubuntu
+      ansible.builtin.command: >
+        pam_tally2 --user {{ item.username }} --deny {{ item.lockout_threshold }} --lock-time {{ item.lockout_duration_minutes * 60 }}
+      with_items: "{{ users_lockout_policy }}"
+      when: ubuntu_os and pam_tally2_command_exists.rc == 0
+      ignore_errors: yes
+      register: pam_tally2_result
+
+    - name: Report Failures for Ubuntu
+      debug:
+        msg: "pam_tally2 failed for {{ pam_tally2_result.results | select('failed') | map(attribute='item.username') | list }}"
+      when: pam_tally2_result | failed and ubuntu_os
+
+    - name: Set Account Lockout Policy for Windows
+      ansible.windows.win_account_policy:
+        username: "{{ item.username }}"
+        lockout_threshold: "{{ item.lockout_threshold }}"
+        lockout_duration_minutes: "{{ item.lockout_duration_minutes }}"
+        lockout_observation_window_minutes: "{{ item.observation_window_minutes }}"
+      with_items: "{{ users_lockout_policy }}"
+      when: windows_os
+      ignore_errors: yes
+      register: win_account_policy_result
+
+    - name: Report Failures for Windows
+      debug:
+        msg: "Windows account policy failed for {{ win_account_policy_result.results | select('failed') | map(attribute='item.username') | list }}"
+      when: win_account_policy_result | failed and windows_os
