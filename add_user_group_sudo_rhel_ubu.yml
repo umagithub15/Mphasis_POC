@@ -7,7 +7,7 @@
     users:
       - user1
       - user2  # Add more usernames as needed
-    target_group: mygroup
+    target_group: adm
 
   tasks:
     - name: Create group if it doesn't exist
