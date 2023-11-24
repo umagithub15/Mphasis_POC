@@ -4,7 +4,7 @@
   become: true  # Run tasks with elevated privileges
 
   tasks:
-    - name: Add username1
+    - name: Add user1
       user:
         name: username1
         state: present
@@ -13,7 +13,7 @@
         shell: /bin/bash  # Specify the desired shell
         createhome: yes  # Create home directory for the user
 
-    - name: Add username2
+    - name: Add user2
       user:
         name: username2
         state: present
