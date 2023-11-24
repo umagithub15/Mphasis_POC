@@ -1,7 +1,7 @@
 ---
 - name: Add Users to Group and Grant sudo Permissions
   hosts: all
-  become: true
+  become: yes
 
   vars:
     users:
