@@ -1,7 +1,7 @@
 ---
 - name: Add users to RHEL and Ubuntu
   hosts: all
-  become: yes  # Run tasks with elevated privileges
+  become: true  # Run tasks with elevated privileges
 
   tasks:
     - name: Add username1
