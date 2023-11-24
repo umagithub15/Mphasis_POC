@@ -9,18 +9,8 @@
     - name: Install Apache and MySQL packages
       ansible.builtin.package:
         name: 
-          - "apache"  
-          - "mysql-server"  
+          - "perl"  
+          - "curl"  
         state: present
 
-    - name: Start and enable Apache service
-      ansible.builtin.service:
-        name: "apache"
-        state: started
-        enabled: yes
-
-    - name: Start and enable MySQL service
-      ansible.builtin.service:
-        name: "mysql"
-        state: started
-        enabled: yes
+  
