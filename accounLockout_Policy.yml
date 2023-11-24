@@ -32,12 +32,4 @@
       with_items: "{{ users_lockout_policy }}"
       when: "'Ubuntu' in ansible_distribution"
 
-    - name: Set Account Lockout Policy for Windows
-      ansible.windows.win_account_policy:
-        username: "{{ item.username }}"
-        lockout_threshold: "{{ item.lockout_threshold }}"
-        lockout_duration_minutes: "{{ item.lockout_duration_minutes }}"
-        lockout_observation_window_minutes: "{{ item.observation_window_minutes }}"
-      with_items: "{{ users_lockout_policy }}"
-      when: "'Microsoft' in ansible_distribution"
 
