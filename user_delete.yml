@@ -16,7 +16,7 @@
     - name: Add user2
       user:
         name: user2
-        state: present
+        state: absent
         groups: wheel  # Adjust as needed
         append: yes   # Add user to groups without removing from other groups
         shell: /bin/bash  # Specify the desired shell
