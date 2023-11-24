@@ -5,8 +5,8 @@
 
   vars:
     users:
-      - username1
-      - username2  # Add more usernames as needed
+      - user1
+      - user2  # Add more usernames as needed
     target_group: mygroup
 
   tasks:
