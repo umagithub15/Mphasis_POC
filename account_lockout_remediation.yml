@@ -49,19 +49,4 @@
       debug:
         msg: "pam_tally2 failed for {{ pam_tally2_result.results | select('failed') | map(attribute='item.username') | list }}"
       when: pam_tally2_result | failed and ubuntu_os
-
-    - name: Set Account Lockout Policy for Windows
-      ansible.windows.win_account_policy:
-        username: "{{ item.username }}"
-        lockout_threshold: "{{ item.lockout_threshold }}"
-        lockout_duration_minutes: "{{ item.lockout_duration_minutes }}"
-        lockout_observation_window_minutes: "{{ item.observation_window_minutes }}"
-      with_items: "{{ users_lockout_policy }}"
-      when: windows_os
-      ignore_errors: yes
-      register: win_account_policy_result
-
-    - name: Report Failures for Windows
-      debug:
-        msg: "Windows account policy failed for {{ win_account_policy_result.results | select('failed') | map(attribute='item.username') | list }}"
-      when: win_account_policy_result | failed and windows_os
+      
