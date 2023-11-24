@@ -1,16 +1,14 @@
 ---
-- name: Install Apache and MySQL
+- name: install_linux_package
   hosts: all
   gather_facts: true
-  become: true  
+  become: true
 
   tasks:
-    
+
     - name: Install packages
       ansible.builtin.package:
-        name: 
-          - "perl"  
-          - "curl"  
+        name:
+          - "nginx"
+          - "wget"
         state: present
-
-  
