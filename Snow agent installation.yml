@@ -1,0 +1,60 @@
+---
+- name: Install Snow Agent
+  hosts: all
+  become: true  # Run tasks with sudo on Linux, and run as Administrator on Windows
+
+  tasks:
+    - name: Install Snow Agent on RHEL and Ubuntu
+      when: "ansible_facts['distribution'] == 'RedHat' or ansible_facts['distribution'] == 'Ubuntu'"
+      block:
+        - name: Install prerequisites for Snow Agent on RHEL
+          when: "ansible_facts['distribution'] == 'RedHat'"
+          package:
+            name: yum-utils
+            state: present
+
+        - name: Install prerequisites for Snow Agent on Ubuntu
+          when: "ansible_facts['distribution'] == 'Ubuntu'"
+          package:
+            name: software-properties-common
+            state: present
+
+        - name: Add Snow Agent repository on RHEL
+          when: "ansible_facts['distribution'] == 'RedHat'"
+          yum_repository:
+            name: snowagent
+            description: Snow Agent Repository
+            baseurl: https://repo.snowsoftware.com/rpm/el{{ ansible_distribution_major_version }}/
+            gpgcheck: yes
+            gpgkey: https://repo.snowsoftware.com/GPG-KEY-snowagent
+
+        - name: Add Snow Agent repository on Ubuntu
+          when: "ansible_facts['distribution'] == 'Ubuntu'"
+          apt_repository:
+            repo: "deb https://repo.snowsoftware.com/ubuntu {{ ansible_distribution_release }} main"
+            state: present
+
+        - name: Install Snow Agent
+          package:
+            name: snowagent
+            state: present
+
+    - name: Install Snow Agent on Windows
+      when: "ansible_facts['os_family'] == 'Windows'"
+      win_chocolatey:
+        name: snowagent
+        state: present
+
+    - name: Start Snow Agent service on RHEL and Ubuntu
+      when: "ansible_facts['distribution'] == 'RedHat' or ansible_facts['distribution'] == 'Ubuntu'"
+      service:
+        name: snowagent
+        state: started
+        enabled: yes
+
+    - name: Start Snow Agent service on Windows
+      when: "ansible_facts['os_family'] == 'Windows'"
+      win_service:
+        name: SnowAgent
+        state: started
+        start_mode: auto
