@@ -1,0 +1,23 @@
+---
+- name: Add users to RHEL and Ubuntu
+  hosts: all
+  become: yes  # Run tasks with elevated privileges
+
+  tasks:
+    - name: Add username1
+      user:
+        name: username1
+        state: present
+        groups: wheel  # Adjust as needed
+        append: yes   # Add user to groups without removing from other groups
+        shell: /bin/bash  # Specify the desired shell
+        createhome: yes  # Create home directory for the user
+
+    - name: Add username2
+      user:
+        name: username2
+        state: present
+        groups: wheel  # Adjust as needed
+        append: yes   # Add user to groups without removing from other groups
+        shell: /bin/bash  # Specify the desired shell
+        createhome: yes  # Create home directory for the user
