@@ -6,7 +6,7 @@
   tasks:
     - name: Add user1
       user:
-        name: username1
+        name: user1
         state: present
         groups: wheel  # Adjust as needed
         append: yes   # Add user to groups without removing from other groups
@@ -15,7 +15,7 @@
 
     - name: Add user2
       user:
-        name: username2
+        name: user2
         state: present
         groups: wheel  # Adjust as needed
         append: yes   # Add user to groups without removing from other groups
