@@ -1,6 +1,6 @@
 ---
 - name: Add Multiple Windows Users
-  hosts: all
+  hosts: win
   gather_facts: true
 
   vars:
