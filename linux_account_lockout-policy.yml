@@ -1,0 +1,32 @@
+- name: Set Account Lockout Policy
+  hosts: all
+  become: yes
+
+  vars:
+    users_lockout_policy:
+      # your lockout policies here
+
+    redhat_os: "'RedHat' in ansible_distribution"
+    ubuntu_os: "'Ubuntu' in ansible_distribution"
+    windows_os: "'Microsoft' in ansible_distribution"
+
+  tasks:
+    - name: Starting at Ansible 2.6, modify user, remove expiry time
+      ansible.builtin.user:
+      name: james18
+      expires: -1
+
+    - name: Set maximum expiration date for password
+      ansible.builtin.user:
+      name: ram19
+      password_expire_max: 10
+
+    - name: Set minimum expiration date for password
+      ansible.builtin.user:
+      name: pushkar15
+      password_expire_min: 5
+
+   -  name: Set number of warning days for password expiration
+      ansible.builtin.user:
+      name: jane157
+      password_expire_warn: 30
