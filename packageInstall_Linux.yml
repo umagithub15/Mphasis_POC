@@ -9,6 +9,6 @@
     - name: Install packages
       ansible.builtin.package:
         name:
-          - "nginx"
+          - "apache2"
           - "wget"
         state: present
