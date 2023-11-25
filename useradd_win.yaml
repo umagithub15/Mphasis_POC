@@ -4,13 +4,6 @@
   gather_facts: true
 
   vars:
-    ansible_user=Administrator
-    ansible_password=G!BG2ophdYfVYX.Tw%yXb;ne3F@y=tf%
-    ansible_port=5986
-    ansible_connection=winrm
-    ansible_winrm_scheme=https
-    ansible_winrm_server_cert_validation=ignore
-    ansible_winrm_kerberos_delegation=true
     users_to_add:
       - username: "user1"
       - username: "user2"
