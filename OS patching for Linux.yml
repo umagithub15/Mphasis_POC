@@ -9,7 +9,6 @@
     - name: Update package cache (apt)
       ansible.builtin.apt:
         update_cache: yes
-      become: true  
       when: ansible_pkg_mgr == 'apt'
 
     - name: Update package cache (dnf)
