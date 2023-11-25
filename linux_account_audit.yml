@@ -1,0 +1,17 @@
+---
+- name: Configure Audit Account Management
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Configure Audit Account Management for RHEL
+      ansible.builtin.command: >
+        auditctl -w /etc/passwd -p wa -k account_changes
+        auditctl -w /etc/shadow -p wa -k account_changes
+      when: "'RedHat' in ansible_distribution"
+
+    - name: Configure Audit Account Management for Ubuntu
+      ansible.builtin.command: >
+        auditctl -w /etc/passwd -p wa -k account_changes
+        auditctl -w /etc/shadow -p wa -k account_changes
+      when: "'Ubuntu' in ansible_distribution"
