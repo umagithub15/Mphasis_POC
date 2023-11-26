@@ -1,6 +1,6 @@
 ---
 - name: Windows Server Pre-Check
-  hosts: win
+  hosts: all
   gather_facts: true
   tasks:
     - name: Display System Information
