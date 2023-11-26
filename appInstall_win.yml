@@ -1,6 +1,6 @@
 ---
 - name: Install Standard Applications on Windows using Chocolatey
-  hosts: win
+  hosts: all
   gather_facts: true
   tasks:
     - name: Install Standard Applications via Chocolatey
