@@ -1,22 +1,31 @@
 ---
-- name: Pre-checks on Windows Servers
-  hosts: all
+- name: Windows Server Pre-Check
+  hosts: win
   gather_facts: true
-  become: false
-
   tasks:
-    - name: Check available disk space
-      win_command: Get-PSDrive -PSProvider 'FileSystem' | Where-Object {$_.Used -gt 0} | Select-Object Name, @{Name="FreeSpace(GB)";Expression={"{0:N2}" -f ($_.Free / 1GB)}} | ConvertTo-Json
-      register: disk_space_result
+    - name: Display System Information
+      win_shell: Get-ComputerInfo
+      register: system_info_output
 
-    - name: Check system uptime
-      win_command: (Get-Date) - (gcim Win32_OperatingSystem).LastBootUpTime
-      register: uptime_result
+    - name: Display Disk Space Information
+      win_shell: Get-Volume | Format-Table -AutoSize
+      register: disk_info_output
 
-    - name: Display pre-check results
+    - name: Display Network Configuration
+      win_shell: Get-NetIPAddress | Format-Table -AutoSize
+      register: network_info_output
+
+    - name: Display Installed Software
+      win_shell: Get-WmiObject -Class Win32_Product | Select-Object Name, Version
+      register: software_info_output
+
+    # Add more tasks as needed for additional pre-checks
+
+    - name: Display Results
       debug:
-        var: disk_space_result.stdout_lines
-
-    - name: Display system uptime
-      debug:
-        var: uptime_result.stdout
+        var: item.stdout_lines
+      loop:
+        - "{{ system_info_output }}"
+        - "{{ disk_info_output }}"
+        - "{{ network_info_output }}"
+        - "{{ software_info_output }}"
