@@ -5,13 +5,13 @@
   tasks:
     - name: Check if backup files exist
       stat:
-        path: /path/to/backup/config
+        path: /etc/nginx/nginx.conf*
       register: backup_files
 
     - name: Rollback configuration files
       ansible.builtin.copy:
-        src: /path/to/backup/config
-        dest: /path/to/config
+        src: /etc/nginx/nginx.conf
+        dest: /etc/nginx/nginx.conf_bkp.$(date +%Y_%m_%d_%H_%M_%S)
         remote_src: yes
       when: backup_files.stat.exists
 
