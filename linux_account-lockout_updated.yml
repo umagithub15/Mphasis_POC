@@ -1,10 +1,10 @@
-
 ---
 - name: Set Account Lockout Policy for Users
   hosts: linux
   become: yes
 
- tasks:
+  
+  tasks:
     - name: Backup current file
       shell: cp -rp /etc/pam.d/sshd /etc/pam.d/sshd_bkp_$(date +%Y_%m_%d_%H_%M_%S)
       when: "'RedHat' in ansible_distribution"
