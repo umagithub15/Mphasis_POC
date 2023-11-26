@@ -24,12 +24,12 @@
       ansible.builtin.command: >
         faillock --user {{ item.username }} --deny {{ item.lockout_threshold }} --lock-time {{ item.lockout_duration_minutes * 60 }}
       with_items: "{{ users_lockout_policy }}"
-      when: "'RedHat' in ansible_distribution"
+      when: "'Ubuntu' in ansible_distribution"
 
     - name: Set Account Lockout Policy for Ubuntu
       ansible.builtin.command: >
         pam_tally2 --user {{ item.username }} --deny {{ item.lockout_threshold }} --lock-time {{ item.lockout_duration_minutes * 60 }}
       with_items: "{{ users_lockout_policy }}"
-      when: "'Ubuntu' in ansible_distribution"
+      when: "'RedHat' in ansible_distribution"
 
 
