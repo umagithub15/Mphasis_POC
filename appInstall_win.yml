@@ -1,16 +1,18 @@
 ---
-- name: Install Standard Applications on Windows
-  hosts: all
+- name: Install Standard Applications on Windows using Chocolatey
+  hosts: win
   gather_facts: true
-
   tasks:
-    - name: Install Google Chrome
+    - name: Install Standard Applications via Chocolatey
       ansible.builtin.win_chocolatey:
-        name: googlechrome
+        name: "{{ item }}"
         state: present
+      with_items:
+        - googlechrome
+        - vscode
+        - firefox
+        # Add more applications as needed
 
-    - name: Install Mozilla Firefox
-      ansible.builtin.win_chocolatey:
-        name: firefox
-        state: present
+    # Add more tasks as needed for additional configurations or checks
+
 
