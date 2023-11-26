@@ -15,8 +15,3 @@
         remote_src: yes
       when: backup_files.stat.exists
 
-    - name: Restart the service
-      ansible.builtin.service:
-        name: myservice
-        state: restarted
-      when: backup_files.stat.exists
