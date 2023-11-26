@@ -1,0 +1,38 @@
+
+---
+- name: Set Account Lockout Policy for Users
+  hosts: linux
+  become: yes
+
+ tasks:
+    - name: Backup current file
+      shell: cp -rp /etc/pam.d/sshd /etc/pam.d/sshd_bkp_$(date +%Y_%m_%d_%H_%M_%S)
+      when: "'RedHat' in ansible_distribution"
+
+    - name: Set Account Lockout Policy for RHEL
+      lineinfile:
+        path: "/etc/pam.d/sshd"
+        line: auth required pam_tally2.so deny=3 unlock_time=180
+        insertbefore: BOF
+      when: "'RedHat' in ansible_distribution"
+
+    - name: restart sshd
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted
+
+    - name: Backup current file
+      shell: cp -rp /etc/pam.d/common-auth /etc/pam.d/common-auth_bkp_$(date +%Y_%m_%d_%H_%M_%S)
+      when: "'Ubuntu' in ansible_distribution"
+
+    - name: Set Account Lockout Policy for Ubuntu
+      lineinfile:
+        path: "/etc/pam.d/common-auth"
+        line: auth    required           pam_tally2.so onerr=fail deny=3 unlock_time=180 audit
+        insertbefore: BOF
+      when: "'Ubuntu' in ansible_distribution"
+
+    - name: restart sshd
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted
