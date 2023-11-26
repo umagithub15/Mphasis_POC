@@ -4,7 +4,7 @@
   gather_facts: true
   tasks:
     - name: Install Standard Applications via Chocolatey
-      win_chocolatey:
+      ansible.builtin.win_chocolatey:
         name: "{{ item }}"
         state: present
       with_items:
