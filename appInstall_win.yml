@@ -2,6 +2,7 @@
 - name: Install Standard Applications on Windows using Chocolatey
   hosts: all
   gather_facts: true
+  become: true
   tasks:
     - name: Install Standard Applications via Chocolatey
       ansible.builtin.win_chocolatey:
