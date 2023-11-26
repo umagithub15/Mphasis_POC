@@ -1,6 +1,6 @@
 ---
 - name: Set Account Lockout Policy for Users
-  hosts: linux
+  hosts: all
   become: yes
 
   
