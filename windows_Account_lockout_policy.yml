@@ -1,0 +1,29 @@
+
+---
+- name: Set Windows Account Lockout Policy
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Set Account Lockout Policy
+      win_shell: |
+        $username = "{{ target_username }}"
+        $lockoutThreshold = "{{ lockout_threshold }}"
+        $lockoutDuration = "{{ lockout_duration }}"
+        $lockoutWindow = "{{ lockout_window }}"
+
+        # Set account lockout threshold
+        net accounts /lockoutthreshold:$lockoutThreshold
+
+        # Set account lockout duration
+        net accounts /lockoutduration:$lockoutDuration
+
+        # Set account lockout observation window
+        net accounts /lockoutwindow:$lockoutWindow
+      vars:
+        target_username: "your_username"
+        lockout_threshold: 3  # Set the maximum number of unsuccessful login attempts before the account is locked out
+        lockout_duration: 30  # Set the duration (in minutes) for which the account is locked out
+        lockout_window: 30    # Set the duration (in minutes) for which the lockout threshold is assessed
+
+# Note: Make sure to replace "your_username" with the actual username you want to configure the lockout policy for.
+
