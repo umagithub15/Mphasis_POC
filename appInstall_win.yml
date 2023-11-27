@@ -1,19 +1,17 @@
 ---
-- name: Install Standard Applications on Windows using Chocolatey
-  hosts: all
+- name: Install Development Tools on Windows using Command
+  hosts: win
   gather_facts: true
-  become: true
   tasks:
-    - name: Install Standard Applications via Chocolatey
-      ansible.builtin.win_chocolatey:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - googlechrome
-        - vscode
-        - firefox
-        # Add more applications as needed
+    - name: Install Git via Chocolatey
+      ansible.builtin.win_command: choco install git -y
+
+    - name: Install Node.js via Chocolatey
+      ansible.builtin.win_command: choco install nodejs -y
+
+    - name: Install Yarn via Chocolatey
+      ansible.builtin.win_command: choco install yarn -y
+
+    # Add more commands for additional packages as needed
 
     # Add more tasks as needed for additional configurations or checks
-
-
