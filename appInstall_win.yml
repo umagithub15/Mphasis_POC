@@ -1,6 +1,6 @@
 ---
 - name: Install Development Tools on Windows using Command
-  hosts: win
+  hosts: all
   gather_facts: true
   tasks:
     - name: Install Git via Chocolatey
