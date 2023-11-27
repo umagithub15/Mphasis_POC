@@ -8,7 +8,6 @@
 
     redhat_os: "'RedHat' in ansible_distribution"
     ubuntu_os: "'Ubuntu' in ansible_distribution"
-    windows_os: "'Microsoft' in ansible_distribution"
 
   tasks:
 
