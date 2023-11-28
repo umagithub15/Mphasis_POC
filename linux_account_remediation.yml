@@ -1,0 +1,32 @@
+---
+- name: Remediate Account Lockout Policy on Ubuntu
+  hosts: all
+  become: yes
+
+  vars:
+    users_lockout_policy:
+      - username: user1
+        lockout_threshold: 3
+        lockout_duration_minutes: 15
+      - username: user2
+        lockout_threshold: 4
+        lockout_duration_minutes: 20
+      # Add more users and lockout policies as needed
+
+  tasks:
+
+    - name: Set Account Lockout Policy for RHEL
+      ansible.builtin.lineinfile:
+        path: /etc/security/limits.conf
+        line: "{{ item.username }} hard maxlogins {{ item.lockout_threshold }}"
+        state: present
+      with_items: "{{ users_lockout_policy }}"
+      when: "'RedHat' in ansible_distribution"
+
+    - name: Set Account Lockout Policy for Ubuntu
+      ansible.builtin.lineinfile:
+        path: /etc/security/limits.conf
+        line: "{{ item.username }} hard maxlogins {{ item.lockout_threshold }}"
+        state: present
+      with_items: "{{ users_lockout_policy }}"
+      when: "'Ubuntu' in ansible_distribution"
