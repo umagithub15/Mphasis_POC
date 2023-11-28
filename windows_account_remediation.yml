@@ -1,0 +1,17 @@
+---
+- name: Configure Windows Account Lockout Policy
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Set Account Lockout Policy
+      win_shell: |
+        $username = 'Administrator'
+        $LockoutThreshold = 5
+        $LockoutObservationWindow = 30
+        $LockoutDuration = 30
+
+        Import-Module ActiveDirectory
+        Set-ADUser -Identity $username -Properties "msDS-LockoutThreshold","msDS-LockoutObservationWindow","msDS-LockoutDuration" -Values $LockoutThreshold,$LockoutObservationWindow,$LockoutDuration
+      become: yes
+      become_user: Administrator
+      when: "'Administrator' in inventory_hostname"
